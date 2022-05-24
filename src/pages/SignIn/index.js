@@ -60,7 +60,9 @@ export default function SignIn() {
   return (
     <Container>
       <Logo margin={Platform.OS === 'android' ? '55px' : '80px'}>
-        HeyGroups
+        hey<Text style={{color: '#179bd7'}}>
+            Groups!
+          </Text>
       </Logo>
       <Text style={{marginBottom: 20, color: '#000'}}>
         Converse, faça amigos, divirta-se!
