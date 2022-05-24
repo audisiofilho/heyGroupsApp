@@ -7,6 +7,9 @@ export default function SignIn() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [type, setType] = useState(false);
+
   return (
     <Container>
       <Logo margin={Platform.OS === 'android' ? '55px' : '80px'}>
@@ -16,12 +19,14 @@ export default function SignIn() {
         Converse, faça amigos, divirta-se!
       </Text>
 
-      <Input
-        value={name}
-        onChange={text => setName(text)}
-        placeholder="Qual seu nome?"
-        placeholderTextColor="#99999b"
-      />
+      {type && (
+        <Input
+          value={name}
+          onChange={text => setName(text)}
+          placeholder="Qual seu nome?"
+          placeholderTextColor="#99999b"
+        />
+      )}
       <Input
         value={email}
         onChange={text => setEmail(text)}
@@ -34,11 +39,13 @@ export default function SignIn() {
         placeholder="Digite uma senha"
         placeholderTextColor="#99999b"
       />
-      <ButtonLogin>
-        <TextButtonLogin>Acessar</TextButtonLogin>
+      <ButtonLogin style={{backgroundColor: type ? '#f53743' : '#57dd86'}}>
+        <TextButtonLogin>{type ? 'Cadastrar' : 'Acessar'}</TextButtonLogin>
       </ButtonLogin>
-      <TouchableOpacity>
-        <Text style={{color: '#000'}}>Criar uma nova conta</Text>
+      <TouchableOpacity onPress={() => setType(!type)}>
+        <Text style={{color: '#000'}}>
+          {type ? 'Já possuo uma conta' : 'Criar uma nova conta'}
+        </Text>
       </TouchableOpacity>
     </Container>
   );
