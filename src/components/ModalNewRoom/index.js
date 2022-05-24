@@ -8,8 +8,48 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+
 export default function ModalNewRoom({setVisible}) {
   const [roomName, setRoomName] = useState('');
+
+  const user = auth().currentUser.toJSON();
+
+  function handleButtonCreate() {
+    if (roomName === '') return;
+
+    createRoom();
+  }
+
+  function createRoom() {
+    firestore()
+      .collection('MESSAGE_THREADS')
+      .add({
+        name: roomName,
+        owner: user.uid,
+        lastMessage: {
+          text: `Grupo ${roomName} criado!`,
+          createdAt: firestore.FieldValue.serverTimestamp(),
+        },
+      })
+      .then(docRef => {
+        docRef
+          .collection('MESSAGES')
+          .add({
+            text: `Grupo ${roomName} criado!`,
+            createdAt: firestore.FieldValue.serverTimestamp(),
+            system: true,
+          })
+          .then(() => {
+            setVisible();
+          });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback onPress={setVisible}>
@@ -24,8 +64,19 @@ export default function ModalNewRoom({setVisible}) {
           style={styles.input}
         />
 
-        <TouchableOpacity style={styles.buttonCreate}>
+        <TouchableOpacity
+          style={styles.buttonCreate}
+          onPress={handleButtonCreate}>
           <Text style={styles.buttonText}>Criar Grupo</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            marginTop: 10,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onPress={setVisible}>
+          <Text style={{color: '#000'}}>Voltar</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -43,34 +94,33 @@ const styles = StyleSheet.create({
   modalContent: {
     flex: 1,
     backgroundColor: '#fff',
-    padding:15
+    padding: 15,
   },
-  title:{
-      marginTop: 14,
-      textAlign:'center',
-      fontWeight:'bold',
-      fontSize: 19,
-      color: '#000'
+  title: {
+    marginTop: 14,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 19,
+    color: '#000',
   },
-  input:{
-      borderRadius: 4,
-      height: 45,
-      backgroundColor:"#ddd",
-      marginVertical: 15,
-      fontSize: 16,
-      paddingHorizontal: 5,
+  input: {
+    borderRadius: 4,
+    height: 45,
+    backgroundColor: '#ddd',
+    marginVertical: 15,
+    fontSize: 16,
+    paddingHorizontal: 5,
   },
-  buttonCreate:{
-      borderRadius:4,
-      backgroundColor: "#179bd7",
-      height: 45,
-      alignItems: 'center',
-      justifyContent: 'center',
+  buttonCreate: {
+    borderRadius: 4,
+    backgroundColor: '#179bd7',
+    height: 45,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  buttonText:{
-      fontSize:19,
-      fontWeight: 'bold',
-      color: "#fff"
-  }
-
+  buttonText: {
+    fontSize: 19,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
 });
