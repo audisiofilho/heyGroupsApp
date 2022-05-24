@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, Modal} from 'react-native';
 
 import auth from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
@@ -7,11 +7,12 @@ import {Container, HeaderRoom, HeaderRoomLeft, Title} from './styles';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import FabButton from '../../components/FabButton';
+import ModalNewRoom from '../../components/ModalNewRoom';
 
 export default function ChatRoom() {
   const navigation = useNavigation();
 
-  const [modalVisible, setModalVisble] = useState(false);
+  const [modalVisible, setModalViseble] = useState(false);
 
   function handleSignOut() {
     auth()
@@ -36,7 +37,10 @@ export default function ChatRoom() {
           <MaterialIcons name="search" size={28} color="#fff" />
         </TouchableOpacity>
       </HeaderRoom>
-      <FabButton setVisible={() => setModalVisble(true)} />
+      <FabButton setVisible={() => setModalViseble(true)} />
+      <Modal visible={modalVisible} animationType="fade" transparent={true}>
+        <ModalNewRoom setVisible={() => setModalViseble(false)}/>
+      </Modal>
     </Container>
   );
 }

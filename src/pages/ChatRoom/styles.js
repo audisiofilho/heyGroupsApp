@@ -11,7 +11,7 @@ export const HeaderRoom = styled.View`
   padding-bottom: 20px ;
   padding-left:10px ;
   padding-right:10px ;
-  background-color:#2e54d4 ;
+  background-color:#179bd7;
   border-bottom-left-radius: 20px ;
   border-bottom-right-radius: 20px ;
 `;

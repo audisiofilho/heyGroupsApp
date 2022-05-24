@@ -88,7 +88,7 @@ export default function SignIn() {
         secureTextEntry={true}
       />
       <ButtonLogin
-        style={{backgroundColor: type ? '#f53743' : '#57dd86'}}
+        style={{backgroundColor:'#179bd7'}}
         onPress={handleLogin}>
         <TextButtonLogin>{type ? 'Cadastrar' : 'Acessar'}</TextButtonLogin>
       </ButtonLogin>

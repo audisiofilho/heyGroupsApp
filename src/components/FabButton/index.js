@@ -19,7 +19,7 @@ export default function FabButton({setVisible}) {
 
 const styles = StyleSheet.create({
   containerButton: {
-    backgroundColor: '#2e54d4',
+    backgroundColor: '#179bd7',
     width: 60,
     height: 60,
     borderRadius: 30,
