@@ -3,12 +3,59 @@ import {Text, Platform, TouchableOpacity} from 'react-native';
 
 import {Container, Logo, Input, ButtonLogin, TextButtonLogin} from './styles';
 
+import auth from '@react-native-firebase/auth';
+import {useNavigation} from '@react-navigation/native';
+
 export default function SignIn() {
+  const navigation = useNavigation();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const [type, setType] = useState(false);
+
+  function handleLogin() {
+    if (type) {
+      if (name === '' || email === '' || password === '') return;
+
+      auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(user => {
+          user.user
+            .updateProfile({
+              displayName: name,
+            })
+            .then(() => {
+              navigation.goBack();
+            });
+        })
+        .catch(error => {
+          if (error.code === 'auth/email-already-in-use') {
+            console.log('That email address is already in use!');
+          }
+
+          if (error.code === 'auth/invalid-email') {
+            console.log('That email address is invalid!');
+          }
+
+          console.log(error);
+        });
+    } else {
+      auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(() => {
+          navigation.goBack();
+        })
+        .catch(error => {
+          if (error.code === 'auth/invalid-email') {
+            console.log('That email address is invalid!');
+          }
+
+          console.log(error);
+        });
+    }
+  }
 
   return (
     <Container>
@@ -22,24 +69,27 @@ export default function SignIn() {
       {type && (
         <Input
           value={name}
-          onChange={text => setName(text)}
+          onChangeText={text => setName(text)}
           placeholder="Qual seu nome?"
           placeholderTextColor="#99999b"
         />
       )}
       <Input
         value={email}
-        onChange={text => setEmail(text)}
+        onChangeText={text => setEmail(text)}
         placeholder="Qual seu email?"
         placeholderTextColor="#99999b"
       />
       <Input
         value={password}
-        onChange={text => setPassword(text)}
-        placeholder="Digite uma senha"
+        onChangeText={text => setPassword(text)}
+        placeholder="Digite sua senha"
         placeholderTextColor="#99999b"
+        secureTextEntry={true}
       />
-      <ButtonLogin style={{backgroundColor: type ? '#f53743' : '#57dd86'}}>
+      <ButtonLogin
+        style={{backgroundColor: type ? '#f53743' : '#57dd86'}}
+        onPress={handleLogin}>
         <TextButtonLogin>{type ? 'Cadastrar' : 'Acessar'}</TextButtonLogin>
       </ButtonLogin>
       <TouchableOpacity onPress={() => setType(!type)}>
