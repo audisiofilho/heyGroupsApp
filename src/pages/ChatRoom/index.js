@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {TouchableOpacity, Modal} from 'react-native';
+import {TouchableOpacity, Modal, ActivityIndicator} from 'react-native';
 
 import auth from '@react-native-firebase/auth';
 import {useNavigation, useIsFocused} from '@react-navigation/native';
@@ -9,6 +9,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FabButton from '../../components/FabButton';
 import ModalNewRoom from '../../components/ModalNewRoom';
 
+import firestore from '@react-native-firebase/firestore';
+
 export default function ChatRoom() {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
@@ -16,10 +18,48 @@ export default function ChatRoom() {
   const [user, setUser] = useState(null);
   const [modalVisible, setModalViseble] = useState(false);
 
+  const [threads, setThreads] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const hasUser = auth().currentUser ? auth().currentUser.toJSON() : null;
     console.log(hasUser);
     setUser(hasUser);
+  }, [isFocused]);
+
+  useEffect(() => {
+    let isActive = true;
+
+    function getChats() {
+      firestore()
+        .collection('MESSAGE_THREADS')
+        .orderBy('lastMessage.createdAt', 'desc')
+        .limit(10)
+        .get()
+        .then(snapshot => {
+          const threads = snapshot.docs.map(documentSnapshot => {
+            return {
+              _id: documentSnapshot.id,
+              name: '',
+              lastMessage: {
+                text: '',
+              },
+              ...documentSnapshot.data(),
+            };
+          });
+
+          if (isActive) {
+            setThreads(threads);
+            setLoading(false);
+            console.log(threads);
+          }
+        });
+    }
+    getChats();
+
+    return () => {
+      isActive = false;
+    };
   }, [isFocused]);
 
   function handleSignOut() {
@@ -33,6 +73,7 @@ export default function ChatRoom() {
         console.log('sem usuario');
       });
   }
+  
   return (
     <Container>
       <HeaderRoom>
@@ -48,6 +89,9 @@ export default function ChatRoom() {
           <MaterialIcons name="search" size={28} color="#fff" />
         </TouchableOpacity>
       </HeaderRoom>
+      {loading && (
+        <ActivityIndicator size={'large'} color='#179bd7' style={{alignSelf:'center'}}/>
+      )}
       <FabButton setVisible={() => setModalViseble(true)} userStatus={user} />
       <Modal visible={modalVisible} animationType="fade" transparent={true}>
         <ModalNewRoom setVisible={() => setModalViseble(false)} />
