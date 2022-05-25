@@ -1,5 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {TouchableOpacity, Modal, ActivityIndicator} from 'react-native';
+import {
+  TouchableOpacity,
+  Modal,
+  ActivityIndicator,
+  FlatList,
+} from 'react-native';
 
 import auth from '@react-native-firebase/auth';
 import {useNavigation, useIsFocused} from '@react-navigation/native';
@@ -8,6 +13,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import FabButton from '../../components/FabButton';
 import ModalNewRoom from '../../components/ModalNewRoom';
+import ChatList from '../../components/ChatList';
 
 import firestore from '@react-native-firebase/firestore';
 
@@ -73,7 +79,7 @@ export default function ChatRoom() {
         console.log('sem usuario');
       });
   }
-  
+
   return (
     <Container>
       <HeaderRoom>
@@ -90,8 +96,20 @@ export default function ChatRoom() {
         </TouchableOpacity>
       </HeaderRoom>
       {loading && (
-        <ActivityIndicator size={'large'} color='#179bd7' style={{alignSelf:'center'}}/>
+        <ActivityIndicator
+          size={'large'}
+          color="#179bd7"
+          style={{alignSelf: 'center'}}
+        />
       )}
+      <FlatList
+        data={threads}
+        keyExtractor={item => item._id}
+        renderItem={({item}) => (
+          <ChatList data={item}/>
+        )}
+        showsVerticalScrollIndicator={false}
+      />
       <FabButton setVisible={() => setModalViseble(true)} userStatus={user} />
       <Modal visible={modalVisible} animationType="fade" transparent={true}>
         <ModalNewRoom setVisible={() => setModalViseble(false)} />
