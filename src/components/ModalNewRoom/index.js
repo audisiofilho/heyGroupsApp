@@ -19,7 +19,23 @@ export default function ModalNewRoom({setVisible, setUpdateScreen}) {
   function handleButtonCreate() {
     if (roomName === '') return;
 
-    createRoom();
+    firestore()
+      .collection('MESSAGE_THREADS')
+      .get()
+      .then(snaoshot => {
+        let myThreads = 0;
+
+        snaoshot.docs.map(docItem => {
+          if (docItem.data().owner === user.uid) {
+            myThreads += 1;
+          }
+        });
+        if (myThreads >= 4) {
+          alert('Você atingiu o limite de grupos por usuario!');
+        } else {
+          createRoom();
+        }
+      });
   }
 
   function createRoom() {
