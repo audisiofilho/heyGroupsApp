@@ -4,6 +4,7 @@ import {
   Modal,
   ActivityIndicator,
   FlatList,
+  Alert,
 } from 'react-native';
 
 import auth from '@react-native-firebase/auth';
@@ -30,7 +31,6 @@ export default function ChatRoom() {
 
   useEffect(() => {
     const hasUser = auth().currentUser ? auth().currentUser.toJSON() : null;
-    console.log(hasUser);
     setUser(hasUser);
   }, [isFocused]);
 
@@ -58,7 +58,6 @@ export default function ChatRoom() {
           if (isActive) {
             setThreads(threads);
             setLoading(false);
-            console.log(threads);
           }
         });
     }
@@ -79,6 +78,28 @@ export default function ChatRoom() {
       .catch(() => {
         console.log('sem usuario');
       });
+  }
+
+  function deleteGroup(ownerId, idGroup) {
+    if (ownerId !== user?.uid) return;
+
+    Alert.alert('Atenção!', 'Você deseja excluir este grupo?', [
+      {
+        text: 'Cancelar',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {
+        text: 'Sim',
+        onPress: () => handleDeleteGroup(idGroup),
+      },
+    ]);
+  }
+
+  async function handleDeleteGroup(idGroup) {
+    await firestore().collection('MESSAGE_THREADS').doc(idGroup).delete();
+
+    setUpdateScreen(!updateScreen);
   }
 
   return (
@@ -107,13 +128,19 @@ export default function ChatRoom() {
         data={threads}
         keyExtractor={item => item._id}
         renderItem={({item}) => (
-          <ChatList data={item}/>
+          <ChatList
+            data={item}
+            deleteGroup={() => deleteGroup(item.owner, item._id)}
+          />
         )}
         showsVerticalScrollIndicator={false}
       />
       <FabButton setVisible={() => setModalViseble(true)} userStatus={user} />
       <Modal visible={modalVisible} animationType="fade" transparent={true}>
-        <ModalNewRoom setVisible={() => setModalViseble(false)} setUpdateScreen={()=> setUpdateScreen(!updateScreen)} />
+        <ModalNewRoom
+          setVisible={() => setModalViseble(false)}
+          setUpdateScreen={() => setUpdateScreen(!updateScreen)}
+        />
       </Modal>
     </Container>
   );
