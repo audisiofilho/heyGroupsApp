@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, FlatList, SafeAreaView} from 'react-native';
 
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+
+import ChatMessage from '../../components/ChatMessage';
 
 export default function Messages({route}) {
   const {thread} = route.params;
@@ -41,8 +43,15 @@ export default function Messages({route}) {
     return () => unsubscribeListener();
   }, []);
   return (
-    <View>
-      <Text>Pagina Messages</Text>
-    </View>
+    <SafeAreaView
+      style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <FlatList
+        data={messages}
+        keyExtractor={item => item._id}
+        renderItem={({item}) => <ChatMessage data={item} />}
+        showsVerticalScrollIndicator={false}
+        style={{width: '100%'}}
+      />
+    </SafeAreaView>
   );
 }
