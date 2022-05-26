@@ -131,6 +131,7 @@ export default function ChatRoom() {
           <ChatList
             data={item}
             deleteGroup={() => deleteGroup(item.owner, item._id)}
+            userStatus={user}
           />
         )}
         showsVerticalScrollIndicator={false}

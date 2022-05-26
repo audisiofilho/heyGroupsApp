@@ -21,6 +21,13 @@ function AppRoutes() {
         component={ChatRoom}
         options={{headerShown: false}}
       />
+      <AppStack.Screen
+        name="Messages"
+        component={Messages}
+        options={({route})=>({
+          title: route.params.thread.name
+        })}
+      />
     </AppStack.Navigator>
   );
 }
