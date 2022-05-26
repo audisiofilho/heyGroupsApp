@@ -21,7 +21,9 @@ export default function ChatMessage({data}) {
             marginRight: isMyMessage ? 0 : 50,
           },
         ]}>
-        {!isMyMessage && <Text style={styles.name}>{data?.user?.displayName}</Text>}
+        {!isMyMessage && (
+          <Text style={styles.name}>{data?.user?.displayName}</Text>
+        )}
         <Text style={styles.message}>{data.text}</Text>
       </View>
     </View>
@@ -30,7 +32,7 @@ export default function ChatMessage({data}) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 10,
+    padding: 10,
   },
   messageBox: {
     borderRadius: 5,
@@ -41,5 +43,9 @@ const styles = StyleSheet.create({
     color: '#f53745',
     fontWeight: 'bold',
     marginBottom: 5,
+  },
+  message: {
+    color: '#000',
+    fontSize: 16,
   },
 });
