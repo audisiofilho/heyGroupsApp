@@ -113,7 +113,7 @@ export default function ChatRoom() {
           )}
           <Title>Grupos</Title>
         </HeaderRoomLeft>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Search')}>
           <MaterialIcons name="search" size={28} color="#fff" />
         </TouchableOpacity>
       </HeaderRoom>

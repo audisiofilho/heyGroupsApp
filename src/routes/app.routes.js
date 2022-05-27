@@ -24,9 +24,14 @@ function AppRoutes() {
       <AppStack.Screen
         name="Messages"
         component={Messages}
-        options={({route})=>({
-          title: route.params.thread.name
+        options={({route}) => ({
+          title: route.params.thread.name,
         })}
+      />
+      <AppStack.Screen
+        name="Search"
+        component={Search}
+        options={{title: 'Procurando algum grupo?'}}
       />
     </AppStack.Navigator>
   );
