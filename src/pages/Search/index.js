@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Keyboard} from 'react-native';
+import {Keyboard, FlatList} from 'react-native';
 import {Container, ContainerInput, Input, ButtonSearch} from './styles';
 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -8,6 +8,8 @@ import {useIsFocused} from '@react-navigation/native';
 
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+
+import ChatList from '../../components/ChatList';
 
 export default function Search() {
   const isFocused = useIsFocused();
@@ -39,7 +41,6 @@ export default function Search() {
           };
         });
         setGroups(threads);
-        console.log(threads);
         setInput('');
         Keyboard.dismiss();
       });
@@ -58,6 +59,12 @@ export default function Search() {
           <MaterialIcons name="search" size={30} color="#fff" />
         </ButtonSearch>
       </ContainerInput>
+      <FlatList showsVerticalScrollIndicator={false}
+      
+      data={groups}
+      keyExtractor={item=> item._id}
+      renderItem={({item})=> <ChatList data={item} userStatus={user}/> }
+      />
     </Container>
   );
 }
